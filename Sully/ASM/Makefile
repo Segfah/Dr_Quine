@@ -11,8 +11,6 @@ NASM_FLAGS = -felf64
 SRC = Sully.asm
 OBJ = ${SRC:.asm=.o}
 
-RM		= rm -rf
-
 all: $(NAME)
 
 $(NAME): $(OBJ)
