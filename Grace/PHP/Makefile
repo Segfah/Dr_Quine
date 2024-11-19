@@ -5,10 +5,13 @@ CC = php
 
 SRC = $(NAME)
 
-.PHONY: all clean fclean test re
+.PHONY: all clean fclean test re run
 
 all:
 	@echo "No compilation needed for PHP scripts."
+
+run:
+	@$(CC) $(SRC)
 
 clean:
 	@echo "No object files to clean for PHP scripts."

@@ -4,7 +4,7 @@ CC = php
 
 SRC = $(NAME)
 
-.PHONY: all clean fclean test re
+.PHONY: all clean fclean test re run
 
 all:
 	@echo "No compilation needed for PHP scripts."
@@ -14,6 +14,9 @@ clean:
 
 fclean: clean
 	rm -f tmp_Colleen
+
+run:
+	@$(CC) $(SRC)
 
 test:
 	@$(CC) $(SRC) > tmp_Colleen; \
