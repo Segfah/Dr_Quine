@@ -32,7 +32,7 @@ int main() {
     fclose(f);
 
     char command[100];
-    sprintf(command, "gcc -Wall -Wextra -Werror -o Sully_%1$d Sully_%1$d.c", n); 
+    sprintf(command, "gcc -Wall -Wextra -Werror -o Sully_%1$d Sully_%1$d.c", n);
     system(command);
 
     if (n > 0) {
