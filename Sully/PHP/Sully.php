@@ -1,9 +1,9 @@
 <?php
 
-$filename_template = 'Sully_%d.php';
+$filename_template = "Sully_%d.php";
 $n = 5;
 
-if (preg_match('/Sully_(\d+)\.php$/', __FILE__, $matches)) {
+if (preg_match("/Sully_(\d+)\.php$/", __FILE__, $matches)) {
     $n = (int)$matches[1];
     $n--;
 }
@@ -35,7 +35,6 @@ if ($n > 0) {
     system("php $filename");
 }
 ';
-
 file_put_contents($filename, sprintf($code, 10, 39, $n, 39, $code, 37, 34));
 
 if ($n > 0) {
