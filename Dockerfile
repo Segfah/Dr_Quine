@@ -19,7 +19,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Actualiza el sistema e instala herramientas necesarias
 RUN apt-get update && \
     apt-get install -y nasm gcc php make curl dos2unix && \
-    apt-get install -y zsh && \
     nasm --version && \
     gcc --version && \
     php --version && \
