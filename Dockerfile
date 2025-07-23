@@ -1,9 +1,14 @@
 # Dockerfile
 # docker build -t entorno-dev .
-# docker run -it --rm -v $(pwd):/workspace entorno-dev zsh
 
-# windows:
-    # docker run -it -v "%cd%":/workspace entorno-dev zsh
+# linux:
+    # docker run -it --rm -v $(pwd):/workspace entorno-dev sh
+
+# Windows:
+    # docker run -it --rm -v "${PWD}:/workspace" entorno-dev sh
+
+# Saltos de línea: LF() dos2unix
+# Saltos de línea: CRLF(windows) unix2dos
 
 # Imagen base equivalente a ubuntu/bionic64
 FROM ubuntu:18.04
@@ -13,7 +18,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Actualiza el sistema e instala herramientas necesarias
 RUN apt-get update && \
-    apt-get install -y nasm gcc php make curl zsh && \
+    apt-get install -y nasm gcc php make curl dos2unix && \
+    apt-get install -y zsh && \
     nasm --version && \
     gcc --version && \
     php --version && \
