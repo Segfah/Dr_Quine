@@ -3,6 +3,7 @@
 ## Descripción del Programa
 
 Este README tiene como objetivo explicar en detalle el funcionamiento del código ensamblador.
+Este quine en ensamblador genera un archivo `Grace_kid.asm` que contiene su propio código fuente. Utiliza macros para estructurar el flujo y llamadas al sistema para crear y escribir el archivo.
 
 ## Explicación del Código
 
@@ -41,6 +42,12 @@ Define un macro llamado `main` que se utilizará como la parte principal del pro
 ```asm
     lea rdi, [rel filename]
 ```
+El macro `main` contiene la lógica principal: abre el archivo, escribe el código fuente usando `dprintf`, y termina el programa con una llamada a `syscall`.
+
+## ¿Cómo funciona el quine?
+
+El programa crea un archivo `Grace_kid.asm` y escribe en él una copia de su propio código fuente. Utiliza macros para estructurar el flujo y simplificar la autorreplicación.
+
 Carga la dirección del nombre del archivo (`filename`) en el registro `rdi`, el cual se usa para pasar argumentos a las llamadas al sistema (`syscall`). Esto prepara el nombre del archivo para abrirlo o crearlo.
 
 ```asm

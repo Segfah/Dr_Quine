@@ -4,10 +4,15 @@ Este README tiene como objetivo explicar en detalle el funcionamiento del códig
 
 ## Secciones del Código
 
-El código está dividido principalmente en dos secciones:
+Este quine en NASM imprime su propio código fuente al ejecutarse. El código está dividido principalmente en dos secciones:
 
 - **section .text**: Contiene el código ejecutable, incluyendo las funciones definidas, tales como `main` y `empty`.
 - **section .data**: Contiene los datos necesarios, como el propio texto del código, utilizado para replicarse.
+
+## ¿Cómo funciona el quine?
+
+La sección `.data` contiene una cadena con el propio código fuente. La función principal (`main`) llama a `printf`, pasando esa cadena y los argumentos necesarios para imprimir correctamente el código, incluyendo los saltos de línea y comillas. Así, el programa se imprime a sí mismo.
+
 
 ### Sección .text
 

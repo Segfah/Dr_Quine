@@ -4,6 +4,11 @@
 
 Este README tiene como objetivo explicar en detalle el funcionamiento del código ensamblador `Sully.asm`. Este programa es un **quine recursivo** que genera y ejecuta copias de sí mismo, decrementando un valor (`n`) hasta alcanzar `0`.
 
+## ¿Cómo funciona el quine?
+
+El programa contiene una cadena en la sección `.data` con su propio código fuente. En cada ejecución, decrementa el valor de `n`, genera un nuevo archivo con el código actualizado, lo compila y lo ejecuta. Este proceso se repite hasta que `n` llega a 0.
+
+
 ## Explicación del Código
 
 ```asm
