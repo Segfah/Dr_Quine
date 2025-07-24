@@ -131,6 +131,7 @@ La sección `.data` contiene una cadena con el propio código fuente. La funció
   La creación y destrucción de los stack frames se encarga de gestionar adecuadamente las llamadas a funciones y permitir la recursividad. Cada función tiene su propio espacio en el stack, asegurando que no interfiera con otras funciones activas.
 
 
+  El stack frame es la "zona" de la pila reservada para una función específica, y la pila es el mecanismo que permite que cada función tenga su propio contexto y que el programa pueda llamar y retornar de funciones correctamente.
 
 &#x20;
 
