@@ -72,11 +72,21 @@ Define los **permisos** del archivo al crearlo. `0644` en octal se traduce a:
 ```
 Establece el número de la llamada al sistema (`syscall`) en `2` (que corresponde a la llamada `open`) y luego realiza la llamada al sistema para abrir o crear el archivo con el nombre, banderas y permisos especificados.
 
+0 es read
+1 es write
+2 es open
+3 es close
+60 es exit
+(man 2 syscalls)
+
 ```asm
     push rax
     pop rdi
 ```
 El descriptor de archivo devuelto por la syscall `open` se encuentra ahora en `rax`. Este valor es movido a `rdi` para ser usado más adelante en la escritura del archivo.
+
+    push rax coloca el valor del registro rax en la pila (stack).
+    pop rdi toma el valor que está en la cima de la pila y lo pone en el registro rdi.
 
 ```asm
     lea rsi, [rel code]
