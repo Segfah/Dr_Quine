@@ -1,97 +1,97 @@
 # README - Grace.asm
 
-## Descripción del Programa
+## Description du Programme
 
-Este README tiene como objetivo explicar en detalle el funcionamiento del código ensamblador.
-Este quine en ensamblador genera un archivo `Grace_kid.asm` que contiene su propio código fuente. Utiliza macros para estructurar el flujo y llamadas al sistema para crear y escribir el archivo.
+Ce README vise à expliquer en détail le fonctionnement du code assembleur.
+Ce quine en assembleur génère un fichier `Grace_kid.asm` qui contient son propre code source. Il utilise des macros pour structurer le flux et des appels système pour créer et écrire le fichier.
 
-## Explicación del Código
+## Explication du Code
 
 ```asm
 section.text:
 ```
-Define una sección de código en ensamblador que contiene la parte ejecutable del programa. La sección `.text` se usa para las instrucciones.
+Définit une section de code en assembleur qui contient la partie exécutable du programme. La section `.text` est utilisée pour les instructions.
 
 ```asm
     global _start
 ```
-Indica que la etiqueta `_start` será el punto de entrada del programa. Esta es la etiqueta que el enlazador buscará para iniciar la ejecución.
+Indique que le label `_start` sera le point d'entrée du programme. C'est le label que le linker recherchera pour démarrer l'exécution.
 
 ```asm
     extern dprintf
 ```
-Informa al enlazador que el programa hace uso de la función `dprintf` definida externamente (generalmente en una biblioteca del sistema).
+Informe le linker que le programme utilise la fonction `dprintf` définie en externe (généralement dans une bibliothèque système).
 
 ```asm
 %define FILENAME `Grace_kid.asm`
 ```
-Define una constante (`FILENAME`) que se usará para definir el nombre del archivo de salida. En este caso, `Grace_kid.asm` será el archivo que contiene el código fuente del programa.
+Définit une constante (`FILENAME`) qui sera utilisée pour définir le nom du fichier de sortie. Dans ce cas, `Grace_kid.asm` sera le fichier contenant le code source du programme.
 
 ```asm
 %define init _start:
 ```
-Define un macro llamado `init` que equivale a la etiqueta `_start:`. Es el punto donde inicia el código ejecutable.
+Définit une macro appelée `init` qui équivaut au label `_start:`. C'est le point où commence le code exécutable.
 
 ```asm
 %macro main 0
 ```
-Define un macro llamado `main` que se utilizará como la parte principal del programa. La macro `main` no toma argumentos (de ahí el `0`).
+Définit une macro appelée `main` qui sera utilisée comme la partie principale du programme. La macro `main` ne prend pas d'arguments (d'où le `0`).
 
-### Dentro del Macro `main`
+### À l'intérieur de la Macro `main`
 
 ```asm
     lea rdi, [rel filename]
 ```
-El macro `main` contiene la lógica principal: abre el archivo, escribe el código fuente usando `dprintf`, y termina el programa con una llamada a `syscall`.
+La macro `main` contient la logique principale : elle ouvre le fichier, écrit le code source en utilisant `dprintf`, et termine le programme avec un appel système.
 
-## ¿Cómo funciona el quine?
+## Comment fonctionne le quine ?
 
-El programa crea un archivo `Grace_kid.asm` y escribe en él una copia de su propio código fuente. Utiliza macros para estructurar el flujo y simplificar la autorreplicación.
+Le programme crée un fichier `Grace_kid.asm` et y écrit une copie de son propre code source. Il utilise des macros pour structurer le flux et simplifier l'autoréplication.
 
-Carga la dirección del nombre del archivo (`filename`) en el registro `rdi`, el cual se usa para pasar argumentos a las llamadas al sistema (`syscall`). Esto prepara el nombre del archivo para abrirlo o crearlo.
+Il charge l'adresse du nom du fichier (`filename`) dans le registre `rdi`, qui est utilisé pour passer des arguments aux appels système (`syscall`). Cela prépare le nom du fichier pour l'ouverture ou la création.
 
 ```asm
     mov rsi, 577
 ```
-Este valor `01101` en **octal** (equivalente a `577` en **decimal**) representa las banderas que se pasarán a la llamada al sistema `open`. Estas banderas indican que se debe:
-- **`O_WRONLY` (1)**: Abrir el archivo solo para escritura.
-- **`O_CREAT` (64)**: Crear el archivo si no existe.
-- **`O_TRUNC` (512)**: Truncar el archivo si ya existe, eliminando su contenido.
+Cette valeur `01101` en **octal** (équivalent à `577` en **décimal**) représente les flags qui seront passés à l'appel système `open`. Ces flags indiquent :
+- **`O_WRONLY` (1)** : Ouvrir le fichier en écriture seule.
+- **`O_CREAT` (64)** : Créer le fichier s'il n'existe pas.
+- **`O_TRUNC` (512)** : Tronquer le fichier s'il existe déjà, supprimant son contenu.
 
-En octal, `01101` corresponde a la combinación de estos tres valores.
+En octal, `01101` correspond à la combinaison de ces trois valeurs.
 
 ```asm
     mov rdx, 420
 ```
-Define los **permisos** del archivo al crearlo. `0644` en octal se traduce a:
-- **`rw-r--r--`**: Lectura y escritura para el propietario, y solo lectura para el grupo y otros.
+Définit les **permissions** du fichier lors de sa création. `0644` en octal se traduit par :
+- **`rw-r--r--`** : Lecture et écriture pour le propriétaire, et lecture seule pour le groupe et les autres.
 
 ```asm
     mov rax, 2
     syscall
 ```
-Establece el número de la llamada al sistema (`syscall`) en `2` (que corresponde a la llamada `open`) y luego realiza la llamada al sistema para abrir o crear el archivo con el nombre, banderas y permisos especificados.
+Définit le numéro de l'appel système (`syscall`) à `2` (qui correspond à l'appel `open`) puis effectue l'appel système pour ouvrir ou créer le fichier avec le nom, les flags et les permissions spécifiés.
 
-0 es read
-1 es write
-2 es open
-3 es close
-60 es exit
+0 est read
+1 est write
+2 est open
+3 est close
+60 est exit
 (man 2 syscalls)
 
 ```asm
     push rax
     pop rdi
 ```
-El descriptor de archivo devuelto por la syscall `open` se encuentra ahora en `rax`. Este valor es movido a `rdi` para ser usado más adelante en la escritura del archivo.
+Le descripteur de fichier retourné par la syscall `open` se trouve maintenant dans `rax`. Cette valeur est déplacée dans `rdi` pour être utilisée plus tard lors de l'écriture dans le fichier.
 
-    push rax coloca el valor del registro rax en la pila (stack).
-    pop rdi toma el valor que está en la cima de la pila y lo pone en el registro rdi.
+    push rax place la valeur du registre rax sur la pile (stack).
+    pop rdi prend la valeur au sommet de la pile et la met dans le registre rdi.
 
 ```asm
     lea rsi, [rel code]
 ```
-Carga la dirección del código fuente (`code`) en el registro `rsi`, que es el segundo argumento para la llamada a `dprintf`.
+Charge l'adresse du code source (`code`) dans le registre `rsi`, qui est le second argument pour l'appel à `dprintf`.
 
 ```asm
     mov rdx, 10
@@ -100,40 +100,40 @@ Carga la dirección del código fuente (`code`) en el registro `rsi`, que es el 
     mov r9, rsi
     call dprintf
 ```
-Estos registros (`rdx`, `rcx`, `r8`, `r9`) se utilizan para preparar los argumentos adicionales que serán pasados a `dprintf`, que es una función que permite imprimir texto formateado en un archivo. En este caso, se utiliza para escribir el propio código del programa al archivo `Grace_kid.asm`.
+Ces registres (`rdx`, `rcx`, `r8`, `r9`) sont utilisés pour préparer les arguments supplémentaires qui seront passés à `dprintf`, une fonction qui permet d'imprimer du texte formaté dans un fichier. Ici, elle est utilisée pour écrire le code du programme dans le fichier `Grace_kid.asm`.
 
 ```asm
     mov rax, 3
     syscall
 ```
-Establece el valor de `rax` para realizar la syscall `close`, que cierra el archivo abierto.
+Définit la valeur de `rax` pour effectuer la syscall `close`, qui ferme le fichier ouvert.
 
 ```asm
     xor rdi, rdi
     mov rax, 60
     syscall
 ```
-Configura los registros necesarios para realizar la syscall `exit`, cerrando el programa de manera correcta. `60` es el número de syscall correspondiente a `exit` y `xor rdi, rdi` establece el valor de salida (`0`, indicando que el programa terminó sin errores).
+Configure les registres nécessaires pour effectuer la syscall `exit`, fermant correctement le programme. `60` est le numéro de syscall correspondant à `exit` et `xor rdi, rdi` définit la valeur de sortie (`0`, indiquant que le programme s'est terminé sans erreur).
 
-### Definición de la Cadena de Código Fuente
+### Définition de la Chaîne de Code Source
 
 ```asm
-code db `section.text:%1$c	global _start%1$c	extern dprintf%1$c%1$c; Este programa genera un archivo Grace_kid.c que contiene su propio código...
+code db `section.text:%1$c\tglobal _start%1$c\textern dprintf%1$c%1$c; Ce programme génère un fichier Grace_kid.c qui contient son propre code...`
 ```
-Define la cadena de texto que contiene el código fuente del programa. Se utiliza para que el programa pueda escribir su propio código al archivo de salida.
+Définit la chaîne de texte contenant le code source du programme. Elle est utilisée pour que le programme puisse écrire son propre code dans le fichier de sortie.
 
 ```asm
 filename db FILENAME, 0x0
 ```
-Define el nombre del archivo (`Grace_kid.asm`) como una cadena terminada en `0x0`.
+Définit le nom du fichier (`Grace_kid.asm`) comme une chaîne terminée par `0x0`.
 
 ```asm
 %endmacro
 ```
-Indica el fin de la macro `main`.
+Indique la fin de la macro `main`.
 
 ```asm
 init
     main
 ```
-Llama al punto de entrada (`init`) y luego ejecuta el macro `main`, que realiza toda la operación descrita.
+Appelle le point d'entrée (`init`) puis exécute la macro `main`, qui réalise toute l'opération décrite.

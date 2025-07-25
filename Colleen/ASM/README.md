@@ -1,138 +1,113 @@
-# README - Quine en Ensamblador NASM (x86-64)
+# README - Quine en Assembleur NASM (x86-64)
 
-Este README tiene como objetivo explicar en detalle el funcionamiento del código ensamblador.
+Ce README vise à expliquer en détail le fonctionnement du code assembleur.
 
-## Secciones del Código
+## Sections du Code
 
-Este quine en NASM imprime su propio código fuente al ejecutarse. El código está dividido principalmente en dos secciones:
+Ce quine en NASM affiche son propre code source lors de l'exécution. Le code est principalement divisé en deux sections :
 
-- **section .text**: Contiene el código ejecutable, incluyendo las funciones definidas, tales como `main` y `empty`.
-- **section .data**: Contiene los datos necesarios, como el propio texto del código, utilizado para replicarse.
+- **section .text** : Contient le code exécutable, y compris les fonctions définies telles que `main` et `empty`.
+- **section .data** : Contient les données nécessaires, comme le texte du code lui-même, utilisé pour se répliquer.
 
-## ¿Cómo funciona el quine?
+## Comment fonctionne le quine ?
 
-La sección `.data` contiene una cadena con el propio código fuente. La función principal (`main`) llama a `printf`, pasando esa cadena y los argumentos necesarios para imprimir correctamente el código, incluyendo los saltos de línea y comillas. Así, el programa se imprime a sí mismo.
+La section `.data` contient une chaîne avec le code source lui-même. La fonction principale (`main`) appelle `printf`, en passant cette chaîne et les arguments nécessaires pour imprimer correctement le code, y compris les sauts de ligne et les guillemets. Ainsi, le programme s'imprime lui-même.
 
-
-### Sección .text
+### Section .text
 
 1. `section .text`
-
-   - Declara la sección de código ejecutable. Esta sección contiene las instrucciones que el procesador ejecutará.
+   - Déclare la section de code exécutable. Cette section contient les instructions que le processeur exécutera.
 
 2. `global main`
-
-   - Declara `main` como un símbolo global, permitiendo que el linker lo encuentre como el punto de entrada del programa.
+   - Déclare `main` comme un symbole global, permettant au linker de le trouver comme point d'entrée du programme.
 
 3. `extern printf`
+   - Informe l'assembleur de l'existence d'une fonction externe appelée `printf`, fournie par la bibliothèque standard C.
 
-   - Informa al ensamblador de la existencia de una función externa llamada `printf`, proporcionada por la biblioteca estándar de C.
-
-4. `; Este comentario está fuera de la función main`
-
-   - Un comentario fuera de la función `main`, requerido como parte de las especificaciones del proyecto para mostrar la capacidad de documentar el código.
+4. `; Ce commentaire est en dehors de la fonction main`
+   - Un commentaire en dehors de la fonction `main`, requis par les spécifications du projet pour montrer la capacité à documenter le code.
 
 5. `empty:`
-
-   - Esta etiqueta define una función vacía llamada `empty`. Su propósito es simplemente ser una función adicional que el `main` puede llamar.
+   - Cette étiquette définit une fonction vide appelée `empty`. Son but est simplement d'être une fonction supplémentaire que `main` peut appeler.
 
 6. `ret`
+   - L'instruction `ret` est utilisée pour retourner de la procédure actuelle, rendant le contrôle à l'appelant.
 
-   - La instrucción `ret` se utiliza para retornar del procedimiento actual, devolviendo el control al llamador.
-
-### Función principal `main`
+### Fonction principale `main`
 
 7. `main:`
-
-   - Aquí comienza la definición de la función `main`, el punto de entrada del programa.
+   - Ici commence la définition de la fonction `main`, le point d'entrée du programme.
 
 8. `push rbp`
+   - Sauvegarde la valeur actuelle du registre de base de pile (`rbp`). Ceci fait partie du préambule standard pour maintenir l'intégrité du stack frame et faciliter le débogage.
 
-   - Guarda el valor actual del registro base de pila (`rbp`). Esto es parte del preámbulo estándar para mantener la integridad del stack frame y facilitar la depuración.
+     Le **stack frame** est une structure de données utilisée pour stocker les informations nécessaires à l'exécution des fonctions, y compris les paramètres, les variables locales et les adresses de retour. En sauvegardant la valeur de `rbp`, on peut restaurer l'état précédent de la pile, ce qui est essentiel pour le débogage et éviter les conflits entre fonctions.
 
-     El **stack frame** es una estructura de datos utilizada para almacenar la información necesaria para la ejecución de funciones, incluyendo parámetros, variables locales, y direcciones de retorno. Al guardar el valor de `rbp`, podemos restaurar el estado anterior del stack, lo cual es esencial para depurar el programa y evitar conflictos entre las funciones.
-
-9. `; Este comentario está dentro de la función main`
-
-   - Este comentario está dentro de la función `main`, cumpliendo con los requisitos del proyecto de incluir comentarios dentro del flujo principal del código.
+9. `; Ce commentaire est à l'intérieur de la fonction main`
+   - Ce commentaire est à l'intérieur de la fonction `main`, répondant aux exigences du projet d'inclure des commentaires dans le flux principal du code.
 
 10. `call empty`
-
-    - Llama a la función `empty`. Aunque esta función no hace nada, está presente para cumplir con el requisito de tener una segunda función y para ilustrar el uso de `call` en ensamblador.
+    - Appelle la fonction `empty`. Bien que cette fonction ne fasse rien, elle est présente pour répondre à l'exigence d'avoir une seconde fonction et pour illustrer l'utilisation de `call` en assembleur.
 
 11. `lea rdi, [rel code]`
+    - Charge l'adresse du label `code` dans le registre `rdi`. Ce registre est utilisé comme premier argument pour `printf`. `rel` indique que l'adresse est relative, ce qui est important pour la portabilité et la compatibilité avec l'adresse de base d'exécution.
 
-    - Carga la dirección de la etiqueta `code` en el registro `rdi`. Este registro se utiliza como el primer argumento para `printf`. `rel` indica que la dirección es relativa, lo cual es importante para mejorar la portabilidad y compatibilidad con la dirección base de ejecución.
-
-     En la convención de llamadas del sistema x86-64 en Linux, los argumentos de una función se pasan a través de registros en el siguiente orden: `rdi`, `rsi`, `rdx`, `rcx`, `r8`, y `r9`. `rdi` se utiliza como el primer argumento porque es parte de esta convención, lo cual permite una llamada eficiente a funciones externas como `printf`. De esta forma, la dirección del bloque de datos que queremos imprimir se pasa correctamente como el primer argumento.
+     Selon la convention d'appel du système x86-64 sous Linux, les arguments d'une fonction sont passés via les registres dans l'ordre suivant : `rdi`, `rsi`, `rdx`, `rcx`, `r8`, et `r9`. `rdi` est utilisé comme premier argument car il fait partie de cette convention, permettant un appel efficace à des fonctions externes comme `printf`. Ainsi, l'adresse du bloc de données à imprimer est correctement passée comme premier argument.
 
 12. `mov rsi, 10`
-
-    - Coloca el valor `10` en el registro `rsi`. Este valor representa el carácter de nueva línea (`\n`) en la salida y será utilizado por `printf`.
+    - Place la valeur `10` dans le registre `rsi`. Cette valeur représente le caractère de nouvelle ligne (`\n`) dans la sortie et sera utilisée par `printf`.
 
 13. `mov rdx, 96`
-
-    - Coloca el valor `96` en el registro `rdx`. Esto es parte de los argumentos que `printf` necesita para formatear el contenido adecuadamente.
+    - Place la valeur `96` dans le registre `rdx`. Ceci fait partie des arguments dont `printf` a besoin pour formater le contenu correctement.
 
 14. `lea rcx, [rel code]`
-
-    - Carga nuevamente la dirección del texto de código en `rcx`, que puede ser utilizado como parte del formato en `printf`. Este paso es necesario para poder imprimir todo el contenido correctamente.
+    - Charge à nouveau l'adresse du texte de code dans `rcx`, qui peut être utilisé comme partie du format dans `printf`. Cette étape est nécessaire pour pouvoir imprimer tout le contenu correctement.
 
 15. `call printf`
-
-    - Llama a la función `printf` para imprimir el contenido del `code`. Aquí, `printf` utilizará los argumentos previos para replicar exactamente el código del programa.
+    - Appelle la fonction `printf` pour imprimer le contenu de `code`. Ici, `printf` utilisera les arguments précédents pour répliquer exactement le code du programme.
 
 16. `pop rbp`
-
-    - Restaura el valor original del registro base de pila (`rbp`). Esta es una parte esencial del epílogo de la función para limpiar el stack antes de retornar.
+    - Restaure la valeur originale du registre de base de pile (`rbp`). Ceci est une partie essentielle de l'épilogue de la fonction pour nettoyer la pile avant de retourner.
 
 17. `ret`
+    - Termine la fonction `main` et rend le contrôle au système d'exploitation.
 
-    - Termina la función `main` y devuelve el control al sistema operativo.
-
-### Sección .data
+### Section .data
 
 18. `section .data`
-
-    - Declara la sección de datos, que contiene información estática utilizada por el programa. En este caso, contiene el propio texto del código para que pueda replicarse.
+    - Déclare la section de données, qui contient des informations statiques utilisées par le programme. Dans ce cas, elle contient le texte du code lui-même pour qu'il puisse se répliquer.
 
 19. `code db ...`
-
-    - Aquí se declara una constante llamada `code`, utilizando `db` (define byte). `db` se utiliza para almacenar el texto del código fuente entre comillas invertidas. Los placeholders (`%1$c`, `%2$c`, `%3$s`) se utilizan para la interpolación de cadenas durante la ejecución, permitiendo que el contenido se imprima exactamente como está escrito.
-    - El texto incluye el código completo del programa en un formato que `printf` puede interpretar para replicarse. Cada línea termina con un código de escape adecuado (`%1$c`, `%2$c`, `%3$s`), lo que permite replicar el formato del código original.
-    - Finalmente, `0x0` indica el final de la cadena, actuando como un terminador nulo, para indicar el fin del dato.
-
+    - Ici, une constante appelée `code` est déclarée, utilisant `db` (define byte). `db` est utilisé pour stocker le texte du code source entre guillemets inversés. Les placeholders (`%1$c`, `%2$c`, `%3$s`) sont utilisés pour l'interpolation de chaînes lors de l'exécution, permettant au contenu d'être imprimé exactement comme écrit.
+    - Le texte inclut le code complet du programme dans un format que `printf` peut interpréter pour se répliquer. Chaque ligne se termine par un code d'échappement approprié (`%1$c`, `%2$c`, `%3$s`), ce qui permet de répliquer le format du code original.
+    - Enfin, `0x0` indique la fin de la chaîne, agissant comme un terminateur nul pour indiquer la fin de la donnée.
 
 
-## Recordatorio:
+## Rappel :
 
+Qu'est-ce qu'un Stack Frame ?
 
-¿Qué es un Stack Frame?
-
-- Un stack frame es una estructura que se crea cada vez que una función es llamada, y se destruye cuando dicha función termina. La estructura del stack frame permite a cada función tener su propio contexto de ejecución sin interferir con otras funciones. A continuación, se detalla cómo se estructura el stack frame:
-  - **Parámetros de la Función**: Cuando se llama a una función, los parámetros que se le pasan se almacenan en registros si hay pocos argumentos; si hay más de los que los registros pueden manejar, se almacenan en la pila (stack).
-  - **Dirección de Retorno**: Al invocar una función, la dirección a la cual se debe regresar después de completar la ejecución de la función se guarda en la pila. Esto se hace automáticamente con la instrucción `call`.
-  - **Valor de RBP Anterior**: El registro base de pila (`rbp`) almacena la dirección base del stack frame actual. Este registro se guarda en la pila (`push rbp`) al inicio de la función, y se restaura (`pop rbp`) al final de la función. Al guardar el valor anterior de `rbp`, se puede mantener la referencia del stack frame anterior, lo cual es crucial para restaurar el estado adecuado cuando la función termine.
-  - **Espacio para Variables Locales**: Las variables locales se almacenan dentro del stack frame de la función. Esto permite que cada función tenga su propio conjunto de variables que no interfieran con otras funciones.
-  - **Restauración del Stack Frame**: Al finalizar la función, se restaura el valor anterior de `rbp` para devolver la referencia al stack frame anterior. Esto permite mantener una estructura coherente del stack y facilita la depuración. Visualmente, el stack frame se vería así:
+- Un stack frame est une structure créée à chaque appel de fonction, et détruite lorsque la fonction se termine. La structure du stack frame permet à chaque fonction d'avoir son propre contexte d'exécution sans interférer avec les autres fonctions. Voici comment le stack frame est structuré :
+  - **Paramètres de la Fonction** : Lorsqu'une fonction est appelée, les paramètres sont stockés dans les registres s'il y a peu d'arguments ; s'il y en a plus que ce que les registres peuvent gérer, ils sont stockés dans la pile.
+  - **Adresse de Retour** : Lors de l'appel d'une fonction, l'adresse à laquelle il faut revenir après l'exécution de la fonction est sauvegardée dans la pile. Ceci est fait automatiquement avec l'instruction `call`.
+  - **Valeur précédente de RBP** : Le registre de base de pile (`rbp`) stocke l'adresse de base du stack frame actuel. Ce registre est sauvegardé dans la pile (`push rbp`) au début de la fonction, et restauré (`pop rbp`) à la fin de la fonction. En sauvegardant la valeur précédente de `rbp`, on peut maintenir la référence du stack frame précédent, ce qui est crucial pour restaurer l'état approprié à la fin de la fonction.
+  - **Espace pour les Variables Locales** : Les variables locales sont stockées dans le stack frame de la fonction. Cela permet à chaque fonction d'avoir son propre ensemble de variables qui n'interfèrent pas avec les autres fonctions.
+  - **Restauration du Stack Frame** : À la fin de la fonction, la valeur précédente de `rbp` est restaurée pour rendre la référence au stack frame précédent. Cela permet de maintenir une structure cohérente de la pile et facilite le débogage. Visuellement, le stack frame ressemble à ceci :
   ```
                ┌─────────────────────────┐
-               │       Parámetros        │ ← Dirección más alta del stack
+               │       Paramètres        │ ← Adresse la plus haute de la pile
                ├─────────────────────────┤
-               │ Dirección de retorno    │ ← Guardada automáticamente con `call`
+               │ Adresse de retour       │ ← Sauvegardée automatiquement avec `call`
                ├─────────────────────────┤
-               │  Valor anterior de RBP  │ ← Guardado con `push rbp`
+               │  Valeur précédente RBP  │ ← Sauvegardée avec `push rbp`
      RBP ────▶ │   (Base Pointer)        │
                ├─────────────────────────┤
-               │    Variables locales    │ ← Espacio reservado en la pila
-               │     de la función       │
-               └─────────────────────────┘ ← Dirección más baja del stack
+               │    Variables locales    │ ← Espace réservé dans la pile
+               │     de la fonction      │
+               └─────────────────────────┘ ← Adresse la plus basse de la pile
   ```
-  La creación y destrucción de los stack frames se encarga de gestionar adecuadamente las llamadas a funciones y permitir la recursividad. Cada función tiene su propio espacio en el stack, asegurando que no interfiera con otras funciones activas.
+  La création et la destruction des stack frames gèrent correctement les appels de fonctions et permettent la récursivité. Chaque fonction a son propre espace dans la pile, assurant qu'elle n'interfère pas avec les autres fonctions actives.
 
+  Le stack frame est la "zone" de la pile réservée à une fonction spécifique, et la pile est le mécanisme qui permet à chaque fonction d'avoir son propre contexte et au programme d'appeler et de retourner des fonctions correctement.
 
-  El stack frame es la "zona" de la pila reservada para una función específica, y la pila es el mecanismo que permite que cada función tenga su propio contexto y que el programa pueda llamar y retornar de funciones correctamente.
-
-&#x20;
-
-- **Convención de Llamadas**: En la arquitectura x86-64, los primeros seis argumentos de una función se pasan en los registros `rdi`, `rsi`, `rdx`, `rcx`, `r8`, y `r9`, respectivamente. Esta convención optimiza la velocidad de las llamadas a funciones al evitar el uso intensivo de la pila, ya que acceder a registros es más rápido que acceder a la memoria de la pila. Después de estos seis registros, cualquier argumento adicional se pasa en la pila.
+- **Convention d'Appel** : Sur l'architecture x86-64, les six premiers arguments d'une fonction sont passés dans les registres `rdi`, `rsi`, `rdx`, `rcx`, `r8`, et `r9`, respectivement. Cette convention optimise la vitesse des appels de fonctions en évitant l'utilisation intensive de la pile, car accéder aux registres est plus rapide qu'accéder à la mémoire de la pile. Après ces six registres, tout argument supplémentaire est passé dans la pile.
